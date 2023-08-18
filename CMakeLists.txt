@@ -3,7 +3,12 @@ project(tensorboard_logger)
 
 option(BUILD_TEST "Build test" OFF)
 
-find_package(Protobuf REQUIRED)
+# list(APPEND CMAKE_PREFIX_PATH  "/home/gridsan/dliveoak/.local/protobuf/src")
+# set(Protobuf_INCLUDE_DIR "/home/gridsan/dliveoak/.local/protobuf/src")
+# set(Protobuf_PROTOC_EXECUTABLE "/home/gridsan/dliveoak/.local/bin/protoc")
+# set(Protobuf_DEBUG true)
+
+# find_package(Protobuf REQUIRED)
 
 # -----------------------------------------------------------------------------
 # Building the tensorboard_logger library
@@ -11,7 +16,31 @@ find_package(Protobuf REQUIRED)
 
 file(GLOB protos "proto/*.proto")
 
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${protos})
+# manually doing stuff which is kind of stupid but works for now
+set(PROTO_SRCS 
+    "proto/event.pb.cc"  
+    "proto/projector_config.pb.cc"  
+    "proto/resource_handle.pb.cc"  
+    "proto/summary.pb.cc"  
+    "proto/tensor.pb.cc"  
+    "proto/tensor_shape.pb.cc" 
+    "proto/types.pb.cc")
+
+set(Protobuf_LIBRARIES
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf-lite.so.31"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf-lite.so"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf-lite.so.31.0.3"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so.31"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so.31.0.3"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotoc.so"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotoc.so.31"
+"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotoc.so.31.0.3"
+    )
+
+# local and global includes
+# set(PROTOBUF_INCLUDE_DIR  )
+# protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${protos})
 
 add_library(tensorboard_logger
     "src/crc.cc"
@@ -21,7 +50,8 @@ add_library(tensorboard_logger
 
 target_compile_features(tensorboard_logger PRIVATE cxx_std_11)
 target_compile_options(tensorboard_logger PRIVATE -Wall -O2)
-
+# manually put include dirs 
+include_directories(tensorboard_logger PRIVATE "/home/gridsan/dliveoak/.conda/envs/ml2/include" "${CMAKE_CURRENT_SOURCE_DIR}/proto/")
 target_include_directories(tensorboard_logger
 PUBLIC
     $<INSTALL_INTERFACE:include>
@@ -45,6 +75,8 @@ endif()
 # -----------------------------------------------------------------------------
 # Installing the tensorboard_logger library
 # -----------------------------------------------------------------------------
+
+message("Installing to ${CMAKE_INSTALL_PREFIX}")
 
 install(
     TARGETS tensorboard_logger
