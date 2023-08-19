@@ -132,6 +132,7 @@ int test_log_embedding(TensorBoardLogger& logger) {
 }
 
 int test_log(const char* log_file) {
+    std::cout << "here" << std::endl;
     TensorBoardLogger logger(log_file);
 
     test_log_scalar(logger);
@@ -145,7 +146,7 @@ int test_log(const char* log_file) {
 }
 
 int main(int argc, char* argv[]) {
-    GOOGLE_PROTOBUF_VERIFY_VERSION;
+    // GOOGLE_PROTOBUF_VERIFY_VERSION;
 
     int ret = test_log("./demo/tfevents.pb");
     assert(ret == 0);

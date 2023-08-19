@@ -26,17 +26,10 @@ set(PROTO_SRCS
     "proto/tensor_shape.pb.cc" 
     "proto/types.pb.cc")
 
-set(Protobuf_LIBRARIES
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf-lite.so.31"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf-lite.so"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf-lite.so.31.0.3"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so.31"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so.31.0.3"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotoc.so"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotoc.so.31"
-"/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotoc.so.31.0.3"
-    )
+add_library(protobuflib SHARED IMPORTED)
+# Provide the full path to the library, so CMake knows where to find it.
+set_target_properties(protobuflib PROPERTIES IMPORTED_LOCATION "/home/gridsan/dliveoak/.conda/envs/ml2/lib/libprotobuf.so")
+    
 
 # local and global includes
 # set(PROTOBUF_INCLUDE_DIR  )
@@ -59,7 +52,7 @@ PUBLIC
     $<BUILD_INTERFACE:${PROTOBUF_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 )
-target_link_libraries(tensorboard_logger PUBLIC ${Protobuf_LIBRARIES})
+target_link_libraries(tensorboard_logger PUBLIC protobuflib)
 
 if (BUILD_TEST)
     add_executable(tensorboard_logger_test tests/test_tensorboard_logger.cc)
